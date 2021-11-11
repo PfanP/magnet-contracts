@@ -1,7 +1,17 @@
 async function main() {
 
-  const [deployer, MockDAO] = await ethers.getSigners();
-  console.log('Deploying contracts with the account: ' + deployer.address);
+    //DAO: multisig
+    //const [deployer, MockDAO] = await ethers.getSigners();
+    const [deployer] = await ethers.getSigners();
+    const accounts = await ethers.getSigners();
+    MockDAO = deployer;
+
+    for (const account of accounts) {
+      console.log(account.address);
+    }
+    
+    console.log('Deploying contracts with the account: ' + deployer.address);
+    console.log('MockDAO: ' + MockDAO.address);
 
     // -- params --
 
@@ -86,7 +96,10 @@ async function main() {
     const OlympusBondingCalculator = await ethers.getContractFactory('OlympusBondingCalculator');
     const olympusBondingCalculator = await OlympusBondingCalculator.deploy( ohm.address );
     console.log("olympusBondingCalculator deployed to", olympusBondingCalculator.address);
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
     
+    //breaks
     const Distributor = await ethers.getContractFactory('Distributor');
     const distributor = await Distributor.deploy(treasury.address, ohm.address, epochLengthInBlocks, firstEpochBlock);
     console.log("distributor deployed to", distributor.address);
@@ -114,12 +127,15 @@ async function main() {
     // Deploy DAI bond
     //@dev changed function call to Treasury of 'valueOf' to 'valueOfToken' in BondDepository due to change in Treausry contract
     const DAIBond = await ethers.getContractFactory('MockOlympusBondDepository');
+    console.log("MockDAO.address " + MockDAO.address);
     const daiBond = await DAIBond.deploy(ohm.address, dai.address, treasury.address, MockDAO.address, zeroAddress);
+    console.log("daiBond deployed to", daiBond.address);
 
     // Deploy Frax bond
     //@dev changed function call to Treasury of 'valueOf' to 'valueOfToken' in BondDepository due to change in Treausry contract
     const FraxBond = await ethers.getContractFactory('MockOlympusBondDepository');
     const fraxBond = await FraxBond.deploy(ohm.address, frax.address, treasury.address, MockDAO.address, zeroAddress);
+    console.log("fraxBond deployed to", fraxBond.address);
 
     // queue and toggle DAI and Frax bond reserve depositor
     await treasury.queue('0', daiBond.address);
@@ -127,37 +143,47 @@ async function main() {
     await treasury.toggle('0', daiBond.address, zeroAddress);
     await treasury.toggle('0', fraxBond.address, zeroAddress);
 
+    console.log("toggle");
+
      // Set DAI and Frax bond terms
      await daiBond.initializeBondTerms(daiBondBCV, bondVestingLength, minBondPrice, maxBondPayout, bondFee, maxBondDebt, intialBondDebt);
      await fraxBond.initializeBondTerms(fraxBondBCV, bondVestingLength, minBondPrice, maxBondPayout, bondFee, maxBondDebt, intialBondDebt);
+     console.log("Set DAI and Frax bond terms");
  
      // Set staking for DAI and Frax bond
+     console.log("Set staking for DAI and Frax bond");
      await daiBond.setStaking(staking.address, stakingHelper.address);
      await fraxBond.setStaking(staking.address, stakingHelper.address);
  
      // Initialize sOHM and set the index
+     console.log("Initialize sOHM and set the index");
      await sOHM.initialize(staking.address);
      await sOHM.setIndex(initialIndex);
  
      // set distributor contract and warmup contract
+     console.log("set distributor contract and warmup contract");
      await staking.setContract('0', distributor.address);
      await staking.setContract('1', stakingWarmup.address);
 
      // Set treasury for OHM token
+    console.log("setvault");
     await ohm.setVault(treasury.address);
 
     // Add staking contract as distributor recipient
+    console.log("Add staking contract as distributor recipient");
     await distributor.addRecipient(staking.address, initialRewardRate);
 
     // queue and toggle reward manager
+    console.log("queue and toggle reward manager");
     await treasury.queue('8', distributor.address);
     await treasury.toggle('8', distributor.address, zeroAddress);
 
     // queue and toggle deployer reserve depositor
+    console.log("queue and toggle deployer reserve depositor");
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    //TODO FAIL
     await treasury.queue('0', deployer.address);
     await treasury.toggle('0', deployer.address, zeroAddress);
-
-    console.log("queue and toggle deployer reserve depositor");
 
     // queue and toggle liquidity depositor
     console.log("queue and toggle liquidity depositor");

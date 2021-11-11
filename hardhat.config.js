@@ -15,6 +15,14 @@ module.exports = {
       }
     }
   },
+  networks: {
+    fuji: {
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      accounts: ["c2116e844ce28b95fce219e716bf7db375ebbf243d6ae241af5c53e442fde0c8"]
+
+      //ChainID:  43113
+    }
+  }
   
   // networks: {
   //   hardhat: {
