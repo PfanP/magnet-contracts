@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.7.5;
 
-import "./safemath.sol";
+import "./SafeMath.sol";
 //import "./ierc20.sol";
 
 //L255 require((value == 0) || (token.allowance(address(this), spender) == 0),

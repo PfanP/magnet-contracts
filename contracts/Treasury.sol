@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.7.5;
 
-import "./safemath.sol";
-import "./address.sol";
-import "./safeerc20.sol";
-import "./ierc20.sol";
+import "./SafeMath.sol";
+import "./Address.sol";
+import "./SafeERC20.sol";
+import "./IERC20.sol";
 
 
 interface IOwnable {

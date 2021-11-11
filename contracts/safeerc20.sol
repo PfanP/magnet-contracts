@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.7.5;
 
-import "./safemath.sol";
-import "./address.sol";
-import "./ierc20.sol";
+import "./SafeMath.sol";
+import "./Address.sol";
+import "./IERC20.sol";
 
 library SafeERC20 {
     using SafeMath for uint256;
