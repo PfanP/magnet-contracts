@@ -6,8 +6,9 @@ import ".//libraries/Address.sol";
 import "./libraries/FullMath.sol";
 import "./libraries/FixedPoint.sol";
 import "./libraries/Counters.sol";
+import "./libraries/ERC20.sol";
+import "./libraries/SafeERC20.sol";
 import "./Ownable.sol";
-import "./ERC20.sol";
 
 interface IERC2612Permit {
     function permit(
@@ -22,8 +23,6 @@ interface IERC2612Permit {
 
     function nonces(address owner) external view returns (uint256);
 }
-
-
 
 abstract contract ERC20Permit is ERC20, IERC2612Permit {
     using Counters for Counters.Counter;
@@ -96,101 +95,6 @@ abstract contract ERC20Permit is ERC20, IERC2612Permit {
     }
 }
 
-library SafeERC20 {
-    using SafeMath for uint256;
-    using AddressX for address;
-
-    function safeTransfer(
-        IERC20 token,
-        address to,
-        uint256 value
-    ) internal {
-        _callOptionalReturn(
-            token,
-            abi.encodeWithSelector(token.transfer.selector, to, value)
-        );
-    }
-
-    function safeTransferFrom(
-        IERC20 token,
-        address from,
-        address to,
-        uint256 value
-    ) internal {
-        _callOptionalReturn(
-            token,
-            abi.encodeWithSelector(token.transferFrom.selector, from, to, value)
-        );
-    }
-
-    function safeApprove(
-        IERC20 token,
-        address spender,
-        uint256 value
-    ) internal {
-        require(
-            (value == 0) || (token.allowance(address(this), spender) == 0),
-            "SafeERC20: approve from non-zero to non-zero allowance"
-        );
-        _callOptionalReturn(
-            token,
-            abi.encodeWithSelector(token.approve.selector, spender, value)
-        );
-    }
-
-    function safeIncreaseAllowance(
-        IERC20 token,
-        address spender,
-        uint256 value
-    ) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).add(
-            value
-        );
-        _callOptionalReturn(
-            token,
-            abi.encodeWithSelector(
-                token.approve.selector,
-                spender,
-                newAllowance
-            )
-        );
-    }
-
-    function safeDecreaseAllowance(
-        IERC20 token,
-        address spender,
-        uint256 value
-    ) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).sub(
-            value,
-            "SafeERC20: decreased allowance below zero"
-        );
-        _callOptionalReturn(
-            token,
-            abi.encodeWithSelector(
-                token.approve.selector,
-                spender,
-                newAllowance
-            )
-        );
-    }
-
-    function _callOptionalReturn(IERC20 token, bytes memory data) private {
-        bytes memory returndata = address(token).functionCall(
-            data,
-            "SafeERC20: low-level call failed"
-        );
-        if (returndata.length > 0) {
-            // Return data is optional
-            // solhint-disable-next-line max-line-length
-            require(
-                abi.decode(returndata, (bool)),
-                "SafeERC20: ERC20 operation did not succeed"
-            );
-        }
-    }
-}
-
 interface ITreasury {
     function deposit(
         uint256 _amount,
@@ -223,7 +127,7 @@ interface IStakingHelper {
 
 contract OlympusBondDepository is OwnableX {
     using FixedPoint for *;
-    using SafeERC20 for IERC20;
+    using SafeERC20X for IERC20;
     using SafeMath for uint256;
 
     /* ======== EVENTS ======== */
