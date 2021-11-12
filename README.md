@@ -1,6 +1,11 @@
 # Smart Contracts
 
+solidity 0.7.5
+
+npx hardhat compile
 npx prettier --write 'contracts/**/*.sol'
+npx hardhat run scripts/deploy.js
+npx hardhat run scripts/deploy.js --network fuji
 
 
 ##  🔧 Setting up Local Development
