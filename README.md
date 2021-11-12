@@ -1,5 +1,7 @@
 # Smart Contracts
 
+npx prettier --write 'contracts/**/*.sol'
+
 
 ##  🔧 Setting up Local Development
 Required: 

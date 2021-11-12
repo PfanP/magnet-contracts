@@ -1059,7 +1059,7 @@ abstract contract ERC20Permit is ERC20, IERC2612Permit {
     }
 }
 
-interface IOwnable {
+interface IOwnableP {
     function owner() external view returns (address);
 
     function renounceOwnership() external;
@@ -1067,7 +1067,7 @@ interface IOwnable {
     function transferOwnership(address newOwner_) external;
 }
 
-contract Ownable is IOwnable {
+contract OwnableP is IOwnableP {
     address internal _owner;
 
     event OwnershipTransferred(
@@ -1109,7 +1109,7 @@ contract Ownable is IOwnable {
     }
 }
 
-contract VaultOwned is Ownable {
+contract VaultOwned is OwnableP {
     address internal _vault;
 
     function setVault(address vault_) external onlyOwner returns (bool) {
