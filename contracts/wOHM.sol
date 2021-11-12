@@ -90,7 +90,6 @@ interface IERC20 {
     );
 }
 
-
 /**
  * @dev Collection of functions related to the address type
  */

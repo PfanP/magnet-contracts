@@ -2,6 +2,7 @@
 pragma solidity 0.7.5;
 
 import "./SafeMath.sol";
+import "../FullMath.sol";
 
 interface IOwnable {
     function policy() external view returns (address);
@@ -65,7 +66,6 @@ contract Ownable is IOwnable {
         _owner = _newOwner;
     }
 }
-
 
 library Address {
     function isContract(address account) internal view returns (bool) {
@@ -677,53 +677,6 @@ library SafeERC20 {
                 "SafeERC20: ERC20 operation did not succeed"
             );
         }
-    }
-}
-
-library FullMath {
-    function fullMul(uint256 x, uint256 y)
-        private
-        pure
-        returns (uint256 l, uint256 h)
-    {
-        uint256 mm = mulmod(x, y, uint256(-1));
-        l = x * y;
-        h = mm - l;
-        if (mm < l) h -= 1;
-    }
-
-    function fullDiv(
-        uint256 l,
-        uint256 h,
-        uint256 d
-    ) private pure returns (uint256) {
-        uint256 pow2 = d & -d;
-        d /= pow2;
-        l /= pow2;
-        l += h * ((-pow2) / pow2 + 1);
-        uint256 r = 1;
-        r *= 2 - d * r;
-        r *= 2 - d * r;
-        r *= 2 - d * r;
-        r *= 2 - d * r;
-        r *= 2 - d * r;
-        r *= 2 - d * r;
-        r *= 2 - d * r;
-        r *= 2 - d * r;
-        return l * r;
-    }
-
-    function mulDiv(
-        uint256 x,
-        uint256 y,
-        uint256 d
-    ) internal pure returns (uint256) {
-        (uint256 l, uint256 h) = fullMul(x, y);
-        uint256 mm = mulmod(x, y, d);
-        if (mm > l) h -= 1;
-        l -= mm;
-        require(h < d, "FullMath::mulDiv: overflow");
-        return fullDiv(l, h, d);
     }
 }
 
