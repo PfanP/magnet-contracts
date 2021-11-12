@@ -1,5 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ganache");
+//require("hardhat-prettier");
+
 
 //import SignerWithAddress from "@nomiclabs/hardhat-ethers/signers"
 
