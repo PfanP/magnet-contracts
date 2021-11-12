@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.7.5;
 
-import "./SafeMath.sol";
+import "./libraries/SafeMath.sol";
+import ".//libraries/Address.sol";
+import "./libraries/FullMath.sol";
+import "./libraries/FixedPoint.sol";
+import "./libraries/Counters.sol";
 import "./Ownable.sol";
-import "./Address.sol";
-import "./FullMath.sol";
-import "./FixedPoint.sol";
 import "./ERC20.sol";
 
 interface IERC2612Permit {
@@ -22,25 +23,7 @@ interface IERC2612Permit {
     function nonces(address owner) external view returns (uint256);
 }
 
-library Counters {
-    using SafeMath for uint256;
 
-    struct Counter {
-        uint256 _value; // default: 0
-    }
-
-    function current(Counter storage counter) internal view returns (uint256) {
-        return counter._value;
-    }
-
-    function increment(Counter storage counter) internal {
-        counter._value += 1;
-    }
-
-    function decrement(Counter storage counter) internal {
-        counter._value = counter._value.sub(1);
-    }
-}
 
 abstract contract ERC20Permit is ERC20, IERC2612Permit {
     using Counters for Counters.Counter;

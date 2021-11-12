@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.7.5;
 
-import "./SafeMath.sol";
-import "../FullMath.sol";
+import "../libraries/SafeMath.sol";
+import "../libraries/FullMath.sol";
 
 interface IOwnable {
     function policy() external view returns (address);
