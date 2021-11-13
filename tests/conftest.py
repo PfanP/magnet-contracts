@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import pytest
-from brownie import chain, OlympusERC20Token
+from brownie import chain, OlympusERC20Token, sOlympus
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -12,5 +12,9 @@ def isolate(fn_isolation):
 
 
 @pytest.fixture(scope="module")
-def token(accounts):
+def otoken(accounts):
     return OlympusERC20Token.deploy({'from': accounts[0]})
+
+@pytest.fixture(scope="module")
+def stoken(accounts):
+    return sOlympus.deploy({'from': accounts[0]})

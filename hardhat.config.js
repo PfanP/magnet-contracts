@@ -1,5 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ganache");
+require("@nomiclabs/hardhat-web3");
+
 //require("hardhat-prettier");
 
 
@@ -45,6 +47,14 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
     console.log(account.address);
   }
 });
+
+// task action function receives the Hardhat Runtime Environment as second argument
+task("web3", "Prints accounts", async (_, { web3 }) => {
+  console.log(await web3.eth.getAccounts());
+
+  
+});
+
   
   
   // paths: {

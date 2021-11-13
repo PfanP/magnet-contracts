@@ -2,19 +2,17 @@
 
 import pytest
 from brownie import chain, accounts
-import brownie
 
 
-def within(a, b):
-    assert abs(a - b) < 5
 
+def test_basic(otoken, stoken):
+    assert otoken.name() == "Magnet"
+    assert otoken.decimals() == 9
 
-def test_basic(token):
-    assert token.name() == "Magnet"
-    assert token.decimals() == 9
+    otoken.setVault(accounts[0])
+    assert otoken.vault() == accounts[0]
 
-    token.setVault(accounts[0])
-    assert token.vault() == accounts[0]
+    assert stoken.name() == "Staked Magnet"
 
     #token.mint(accounts[0], 100)
     #assert token.balanceOf(accounts[0]) == 100
