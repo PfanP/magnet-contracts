@@ -5,7 +5,7 @@ import "./libraries/SafeMath.sol";
 import "./libraries/Address.sol";
 import "./libraries/SafeERC20.sol";
 import "./libraries/IERC20.sol";
-import "./Ownable.sol";
+import "./gov/Ownable.sol";
 
 interface IERC20Mintable {
     function mint(uint256 amount_) external;

@@ -9,7 +9,7 @@ import "./libraries/Counters.sol";
 import "./libraries/ERC20.sol";
 import "./libraries/SafeERC20.sol";
 import "./libraries/ERC20Permit.sol";
-import "./Ownable.sol";
+import "./gov/Ownable.sol";
 
 interface ITreasury {
     function deposit(
@@ -129,6 +129,7 @@ contract OlympusBondDepository is OwnableX {
         address _principle,
         address _treasury,
         address _DAO,
+        //address _VentureDAO,
         address _bondCalculator
     ) {
         require(_OHM != address(0));
@@ -285,12 +286,16 @@ contract OlympusBondDepository is OwnableX {
         uint256 value = ITreasury(treasury).valueOf(principle, _amount);
         uint256 payout = payoutFor(value); // payout to bonder is computed
 
-        require(payout >= 10000000, "Bond too small"); // must be > 0.01 OHM ( underflow protection )
+        require(payout >= 10 * 10**6, "Bond too small"); // must be > 0.01 OHM ( underflow protection )
         require(payout <= maxPayout(), "Bond too large"); // size protection because there is no slippage
 
         // profits are calculated
+        //fee in percent
         uint256 fee = payout.mul(terms.fee).div(10000);
         uint256 profit = value.sub(payout).sub(fee);
+
+        //split profit
+        //IVentureDAO(ventureDAO).deposit(_amount, principle, profit);
 
         /**
             principle is transferred in

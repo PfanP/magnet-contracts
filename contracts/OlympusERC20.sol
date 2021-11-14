@@ -5,7 +5,7 @@ import "./libraries/SafeMath.sol";
 import "./libraries/Counters.sol";
 import "./libraries/ERC20Permit.sol";
 import "./EnumerableSet.sol";
-import "./Ownable.sol";
+import "./gov/Ownable.sol";
 
 contract VaultOwned is OwnableP {
     address internal _vault;

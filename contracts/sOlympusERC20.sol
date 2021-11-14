@@ -4,7 +4,7 @@ pragma solidity 0.7.5;
 import "./libraries/SafeMath.sol";
 import "./libraries/Counters.sol";
 import "./libraries/ERC20Permit.sol";
-import "./Ownable.sol";
+import "./gov/Ownable.sol";
 
 contract sOlympus is ERC20Permit, OwnableM {
     using SafeMath for uint256;

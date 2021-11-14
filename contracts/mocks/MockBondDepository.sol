@@ -7,7 +7,7 @@ import "../libraries/FixedPoint.sol";
 import "../libraries/Counters.sol";
 import "../libraries/IERC20.sol";
 import "../libraries/ERC20Permit.sol";
-import "../Ownable.sol";
+import "../gov/Ownable.sol";
 
 library Address {
     function isContract(address account) internal view returns (bool) {
