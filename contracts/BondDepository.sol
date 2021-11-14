@@ -9,7 +9,7 @@ import "./libraries/Counters.sol";
 import "./libraries/ERC20.sol";
 import "./libraries/SafeERC20.sol";
 import "./libraries/ERC20Permit.sol";
-import "./gov/Ownable.sol";
+import "./Ownable.sol";
 
 interface ITreasury {
     function deposit(
@@ -43,7 +43,7 @@ interface IStakingHelper {
 
 contract OlympusBondDepository is OwnableX {
     using FixedPoint for *;
-    using SafeERC20X for IERC20;
+    using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     /* ======== EVENTS ======== */

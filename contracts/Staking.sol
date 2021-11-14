@@ -3,7 +3,7 @@ pragma solidity 0.7.5;
 
 import "./libraries/SafeMath.sol";
 import "./libraries/SafeERC20.sol";
-import "./gov/Ownable.sol";
+import "./Ownable.sol";
 
 interface IsOHM {
     function rebase(uint256 ohmProfit_, uint256 epoch_)

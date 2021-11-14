@@ -2,10 +2,22 @@
 
 solidity 0.7.5
 
+```
+ganache-cli -m magnet
+
 npx hardhat compile
 npx prettier --write 'contracts/**/*.sol'
 npx hardhat run scripts/deploy.js
 npx hardhat run scripts/deploy.js --network fuji
+
+```
+
+https://github.com/OpenZeppelin/openzeppelin-contracts/tree/release-v3.4
+
+import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/tokens/ERC20/IERC20.sol";
 
 
 ##  🔧 Setting up Local Development
