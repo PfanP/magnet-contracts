@@ -71,6 +71,9 @@ contract OlympusBondDepository is OwnableX {
         bool addition
     );
 
+    event log(string erromsg);
+    event log(string erromsg, uint256 data);
+
     /* ======== STATE VARIABLES ======== */
 
     address public immutable OHM; // token given as payment for bond
@@ -274,9 +277,13 @@ contract OlympusBondDepository is OwnableX {
 
         decayDebt();
         require(totalDebt <= terms.maxDebt, "Max capacity reached");
+        //emit log("test");
 
         uint256 priceInUSD = bondPriceInUSD(); // Stored in bond info
         uint256 nativePrice = _bondPrice();
+
+        ///emit log("debtRatio", debtRatio());
+        
 
         require(
             _maxPrice >= nativePrice,
@@ -333,6 +340,8 @@ contract OlympusBondDepository is OwnableX {
 
         adjust(); // control variable is adjusted
         return payout;
+
+        //return 0;
     }
 
     /**
