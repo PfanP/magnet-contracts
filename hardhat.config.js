@@ -1,6 +1,8 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ganache");
 require("@nomiclabs/hardhat-web3");
+require("@nomiclabs/hardhat-ethers");
+
 
 //require("hardhat-prettier");
 
@@ -54,6 +56,17 @@ task("web3", "Prints accounts", async (_, { web3 }) => {
 
   
 });
+
+task(
+  "number",
+  "Prints the current block number",
+  async (_, { ethers }) => {
+    await ethers.provider.getBlockNumber().then((blockNumber) => {
+      console.log("Current block number: " + blockNumber);
+    });
+  }
+);
+
 
   
   

@@ -99,7 +99,6 @@ async function main() {
 
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    //breaks
     const Distributor = await ethers.getContractFactory('Distributor');
     const distributor = await Distributor.deploy(treasury.address, ohm.address, epochLengthInBlocks, firstEpochBlock);
     console.log("distributor deployed to", distributor.address);

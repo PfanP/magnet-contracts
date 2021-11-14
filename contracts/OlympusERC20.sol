@@ -3,8 +3,8 @@ pragma solidity 0.7.5;
 
 import "./libraries/SafeMath.sol";
 import "./libraries/Counters.sol";
+import "./libraries/ERC20Permit.sol";
 import "./EnumerableSet.sol";
-import "./ERC20Permit.sol";
 import "./Ownable.sol";
 
 contract VaultOwned is OwnableP {

@@ -5,8 +5,9 @@ import "../libraries/SafeMath.sol";
 import "../libraries/FullMath.sol";
 import "../libraries/FixedPoint.sol";
 import "../libraries/Counters.sol";
-import "../Ownable";
-
+import "../libraries/IERC20.sol";
+import "../libraries/ERC20Permit.sol";
+import "../Ownable.sol";
 
 
 library Address {
@@ -200,38 +201,7 @@ library Address {
     }
 }
 
-interface IERC20 {
-    function decimals() external view returns (uint8);
 
-    function totalSupply() external view returns (uint256);
-
-    function balanceOf(address account) external view returns (uint256);
-
-    function transfer(address recipient, uint256 amount)
-        external
-        returns (bool);
-
-    function allowance(address owner, address spender)
-        external
-        view
-        returns (uint256);
-
-    function approve(address spender, uint256 amount) external returns (bool);
-
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
-
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 value
-    );
-}
 
 abstract contract ERC20 is IERC20 {
     using SafeMath for uint256;
@@ -422,90 +392,7 @@ abstract contract ERC20 is IERC20 {
     ) internal virtual {}
 }
 
-interface IERC2612Permit {
-    function permit(
-        address owner,
-        address spender,
-        uint256 amount,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) external;
 
-    function nonces(address owner) external view returns (uint256);
-}
-
-abstract contract ERC20Permit is ERC20, IERC2612Permit {
-    using Counters for Counters.Counter;
-
-    mapping(address => Counters.Counter) private _nonces;
-
-    // keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
-    bytes32 public constant PERMIT_TYPEHASH =
-        0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
-
-    bytes32 public DOMAIN_SEPARATOR;
-
-    constructor() {
-        uint256 chainID;
-        assembly {
-            chainID := chainid()
-        }
-
-        DOMAIN_SEPARATOR = keccak256(
-            abi.encode(
-                keccak256(
-                    "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-                ),
-                keccak256(bytes(name())),
-                keccak256(bytes("1")), // Version
-                chainID,
-                address(this)
-            )
-        );
-    }
-
-    function permit(
-        address owner,
-        address spender,
-        uint256 amount,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) public virtual override {
-        require(block.timestamp <= deadline, "Permit: expired deadline");
-
-        bytes32 hashStruct = keccak256(
-            abi.encode(
-                PERMIT_TYPEHASH,
-                owner,
-                spender,
-                amount,
-                _nonces[owner].current(),
-                deadline
-            )
-        );
-
-        bytes32 _hash = keccak256(
-            abi.encodePacked(uint16(0x1901), DOMAIN_SEPARATOR, hashStruct)
-        );
-
-        address signer = ecrecover(_hash, v, r, s);
-        require(
-            signer != address(0) && signer == owner,
-            "ZeroSwapPermit: Invalid signature"
-        );
-
-        _nonces[owner].increment();
-        _approve(owner, spender, amount);
-    }
-
-    function nonces(address owner) public view override returns (uint256) {
-        return _nonces[owner].current();
-    }
-}
 
 library SafeERC20 {
     using SafeMath for uint256;
@@ -602,53 +489,6 @@ library SafeERC20 {
     }
 }
 
-// library FixedPoint {
-//     struct uq112x112 {
-//         uint224 _x;
-//     }
-
-//     struct uq144x112 {
-//         uint256 _x;
-//     }
-
-//     uint8 private constant RESOLUTION = 112;
-//     uint256 private constant Q112 = 0x10000000000000000000000000000;
-//     uint256 private constant Q224 =
-//         0x100000000000000000000000000000000000000000000000000000000;
-//     uint256 private constant LOWER_MASK = 0xffffffffffffffffffffffffffff; // decimal of UQ*x112 (lower 112 bits)
-
-//     function decode(uq112x112 memory self) internal pure returns (uint112) {
-//         return uint112(self._x >> RESOLUTION);
-//     }
-
-//     function decode112with18(uq112x112 memory self)
-//         internal
-//         pure
-//         returns (uint256)
-//     {
-//         return uint256(self._x) / 5192296858534827;
-//     }
-
-//     function fraction(uint256 numerator, uint256 denominator)
-//         internal
-//         pure
-//         returns (uq112x112 memory)
-//     {
-//         require(denominator > 0, "FixedPoint::fraction: division by zero");
-//         if (numerator == 0) return FixedPoint.uq112x112(0);
-
-//         if (numerator <= uint144(-1)) {
-//             uint256 result = (numerator << RESOLUTION) / denominator;
-//             require(result <= uint224(-1), "FixedPoint::fraction: overflow");
-//             return uq112x112(uint224(result));
-//         } else {
-//             uint256 result = FullMath.mulDiv(numerator, Q112, denominator);
-//             require(result <= uint224(-1), "FixedPoint::fraction: overflow");
-//             return uq112x112(uint224(result));
-//         }
-//     }
-// }
-
 interface ITreasury {
     function deposit(
         uint256 _amount,
@@ -679,7 +519,7 @@ interface IStakingHelper {
     function stake(uint256 _amount, address _recipient) external;
 }
 
-contract MockOlympusBondDepository is Ownable {
+contract MockOlympusBondDepository is OwnableX {
     using FixedPoint for *;
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
