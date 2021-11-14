@@ -3,69 +3,11 @@ pragma solidity 0.7.5;
 
 import "../libraries/SafeMath.sol";
 import "../libraries/FullMath.sol";
+import "../libraries/FixedPoint.sol";
+import "../libraries/Counters.sol";
+import "../Ownable";
 
-interface IOwnable {
-    function policy() external view returns (address);
 
-    function renounceManagement() external;
-
-    function pushManagement(address newOwner_) external;
-
-    function pullManagement() external;
-}
-
-contract Ownable is IOwnable {
-    address internal _owner;
-    address internal _newOwner;
-
-    event OwnershipPushed(
-        address indexed previousOwner,
-        address indexed newOwner
-    );
-    event OwnershipPulled(
-        address indexed previousOwner,
-        address indexed newOwner
-    );
-
-    constructor() {
-        _owner = msg.sender;
-        emit OwnershipPushed(address(0), _owner);
-    }
-
-    function policy() public view override returns (address) {
-        return _owner;
-    }
-
-    modifier onlyPolicy() {
-        require(_owner == msg.sender, "Ownable: caller is not the owner");
-        _;
-    }
-
-    function renounceManagement() public virtual override onlyPolicy {
-        emit OwnershipPushed(_owner, address(0));
-        _owner = address(0);
-    }
-
-    function pushManagement(address newOwner_)
-        public
-        virtual
-        override
-        onlyPolicy
-    {
-        require(
-            newOwner_ != address(0),
-            "Ownable: new owner is the zero address"
-        );
-        emit OwnershipPushed(_owner, newOwner_);
-        _newOwner = newOwner_;
-    }
-
-    function pullManagement() public virtual override {
-        require(msg.sender == _newOwner, "Ownable: must be new owner to pull");
-        emit OwnershipPulled(_owner, _newOwner);
-        _owner = _newOwner;
-    }
-}
 
 library Address {
     function isContract(address account) internal view returns (bool) {
@@ -494,26 +436,6 @@ interface IERC2612Permit {
     function nonces(address owner) external view returns (uint256);
 }
 
-library Counters {
-    using SafeMath for uint256;
-
-    struct Counter {
-        uint256 _value; // default: 0
-    }
-
-    function current(Counter storage counter) internal view returns (uint256) {
-        return counter._value;
-    }
-
-    function increment(Counter storage counter) internal {
-        counter._value += 1;
-    }
-
-    function decrement(Counter storage counter) internal {
-        counter._value = counter._value.sub(1);
-    }
-}
-
 abstract contract ERC20Permit is ERC20, IERC2612Permit {
     using Counters for Counters.Counter;
 
@@ -680,52 +602,52 @@ library SafeERC20 {
     }
 }
 
-library FixedPoint {
-    struct uq112x112 {
-        uint224 _x;
-    }
+// library FixedPoint {
+//     struct uq112x112 {
+//         uint224 _x;
+//     }
 
-    struct uq144x112 {
-        uint256 _x;
-    }
+//     struct uq144x112 {
+//         uint256 _x;
+//     }
 
-    uint8 private constant RESOLUTION = 112;
-    uint256 private constant Q112 = 0x10000000000000000000000000000;
-    uint256 private constant Q224 =
-        0x100000000000000000000000000000000000000000000000000000000;
-    uint256 private constant LOWER_MASK = 0xffffffffffffffffffffffffffff; // decimal of UQ*x112 (lower 112 bits)
+//     uint8 private constant RESOLUTION = 112;
+//     uint256 private constant Q112 = 0x10000000000000000000000000000;
+//     uint256 private constant Q224 =
+//         0x100000000000000000000000000000000000000000000000000000000;
+//     uint256 private constant LOWER_MASK = 0xffffffffffffffffffffffffffff; // decimal of UQ*x112 (lower 112 bits)
 
-    function decode(uq112x112 memory self) internal pure returns (uint112) {
-        return uint112(self._x >> RESOLUTION);
-    }
+//     function decode(uq112x112 memory self) internal pure returns (uint112) {
+//         return uint112(self._x >> RESOLUTION);
+//     }
 
-    function decode112with18(uq112x112 memory self)
-        internal
-        pure
-        returns (uint256)
-    {
-        return uint256(self._x) / 5192296858534827;
-    }
+//     function decode112with18(uq112x112 memory self)
+//         internal
+//         pure
+//         returns (uint256)
+//     {
+//         return uint256(self._x) / 5192296858534827;
+//     }
 
-    function fraction(uint256 numerator, uint256 denominator)
-        internal
-        pure
-        returns (uq112x112 memory)
-    {
-        require(denominator > 0, "FixedPoint::fraction: division by zero");
-        if (numerator == 0) return FixedPoint.uq112x112(0);
+//     function fraction(uint256 numerator, uint256 denominator)
+//         internal
+//         pure
+//         returns (uq112x112 memory)
+//     {
+//         require(denominator > 0, "FixedPoint::fraction: division by zero");
+//         if (numerator == 0) return FixedPoint.uq112x112(0);
 
-        if (numerator <= uint144(-1)) {
-            uint256 result = (numerator << RESOLUTION) / denominator;
-            require(result <= uint224(-1), "FixedPoint::fraction: overflow");
-            return uq112x112(uint224(result));
-        } else {
-            uint256 result = FullMath.mulDiv(numerator, Q112, denominator);
-            require(result <= uint224(-1), "FixedPoint::fraction: overflow");
-            return uq112x112(uint224(result));
-        }
-    }
-}
+//         if (numerator <= uint144(-1)) {
+//             uint256 result = (numerator << RESOLUTION) / denominator;
+//             require(result <= uint224(-1), "FixedPoint::fraction: overflow");
+//             return uq112x112(uint224(result));
+//         } else {
+//             uint256 result = FullMath.mulDiv(numerator, Q112, denominator);
+//             require(result <= uint224(-1), "FixedPoint::fraction: overflow");
+//             return uq112x112(uint224(result));
+//         }
+//     }
+// }
 
 interface ITreasury {
     function deposit(
