@@ -24,7 +24,7 @@ interface IBondCalculator {
         returns (uint256 _value);
 }
 
-contract OlympusTreasury is OwnableT {
+contract OlympusTreasury is OwnableM {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
