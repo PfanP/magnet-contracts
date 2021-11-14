@@ -5,7 +5,6 @@ import "./SafeMath.sol";
 import "./Counters.sol";
 import "./IERC20.sol";
 
-
 abstract contract ERC20B is IERC20 {
     using SafeMath for uint256;
 

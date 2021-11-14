@@ -9,7 +9,6 @@ import "../libraries/IERC20.sol";
 import "../libraries/ERC20Permit.sol";
 import "../Ownable.sol";
 
-
 library Address {
     function isContract(address account) internal view returns (bool) {
         uint256 size;
@@ -201,8 +200,6 @@ library Address {
     }
 }
 
-
-
 abstract contract ERC20 is IERC20 {
     using SafeMath for uint256;
 
@@ -391,8 +388,6 @@ abstract contract ERC20 is IERC20 {
         uint256 amount_
     ) internal virtual {}
 }
-
-
 
 library SafeERC20 {
     using SafeMath for uint256;

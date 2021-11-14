@@ -11,7 +11,6 @@ import "./libraries/SafeERC20.sol";
 import "./libraries/ERC20Permit.sol";
 import "./Ownable.sol";
 
-
 interface ITreasury {
     function deposit(
         uint256 _amount,
