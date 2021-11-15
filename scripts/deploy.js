@@ -33,17 +33,14 @@ async function main() {
     // Ethereum 0 address, used when toggling changes in treasury
     const zeroAddress = '0x0000000000000000000000000000000000000000';
 
-    // Large number for approval for Frax and DAI
+    // Large number for approval for DAI
     const largeApproval = '100000000000000000000000000000000';
 
-    // Initial mint for Frax and DAI (10,000,000)
+    // Initial mint for DAI (10,000,000)
     const initialMint = '10000000000000000000000000';
 
     // DAI bond BCV
     const daiBondBCV = '369';
-
-    // Frax bond BCV
-    const fraxBondBCV = '690';
 
     // Bond vesting length in blocks. 33110 ~ 5 days
     const bondVestingLength = '33110';
@@ -75,21 +72,14 @@ async function main() {
 
     console.log("dai deployed to", dai.address);
 
-    // Deploy Frax
-    const Frax = await ethers.getContractFactory('FRAX');
-    const frax = await Frax.deploy( 0 );
-
-    // Deploy 10,000,000 mock DAI and mock Frax
+    // Deploy 10,000,000 mock DAI
     await dai.mint( deployer.address, initialMint );
-    await frax.mint( deployer.address, initialMint );
-
-    console.log("frax deployed to", frax.address);
 
     const Treasury = await ethers.getContractFactory('MockOlympusTreasury'); 
 
     //TODO check
     let _blocksNeededForQueue=0
-    const treasury = await Treasury.deploy( ohm.address, dai.address, frax.address, _blocksNeededForQueue );
+    const treasury = await Treasury.deploy( ohm.address, dai.address, _blocksNeededForQueue );
 
     console.log("treasury deployed to", treasury.address);
     
@@ -130,18 +120,18 @@ async function main() {
     const daiBond = await DAIBond.deploy(ohm.address, dai.address, treasury.address, MockDAO.address, zeroAddress);
     console.log("daiBond deployed to", daiBond.address);
 
-    // queue and toggle DAI and Frax bond reserve depositor
+    // queue and toggle DAI bond reserve depositor
     await treasury.queue('0', daiBond.address);
     await treasury.toggle('0', daiBond.address, zeroAddress);
 
     console.log("toggle");
 
-     // Set DAI and Frax bond terms
+     // Set DAI bond terms
      await daiBond.initializeBondTerms(daiBondBCV, bondVestingLength, minBondPrice, maxBondPayout, bondFee, maxBondDebt, intialBondDebt);
      console.log("Set DAI bond terms");
  
      // Set staking for DAI bond
-     console.log("Set staking for DAI and Frax bond");
+     console.log("Set staking for DAI");
      await daiBond.setStaking(staking.address, stakingHelper.address);
  
      // Initialize sOHM and set the index
@@ -183,23 +173,22 @@ async function main() {
     console.log("Approve the treasury to spend DAI");
     await dai.approve(treasury.address, largeApproval );
 
-    // Approve dai and frax bonds to spend deployer's DAI
-    console.log("Approve dai and frax bonds to spend deployer's DAI");
+    // Approve dai bonds to spend deployer's DAI
+    console.log("Approve dai bonds to spend deployer's DAI");
     await dai.approve(daiBond.address, largeApproval );
 
     // Approve staking and staking helper contact to spend deployer's OHM
     console.log("Approve staking and staking helper contact to spend deployer's OHM");
     await ohm.approve(staking.address, largeApproval);
     await ohm.approve(stakingHelper.address, largeApproval);
-
-    //TODO
+    
     // Deposit 9,000,000 DAI to treasury, 600,000 OHM gets minted to deployer and 8,400,000 are in treasury as excesss reserves
     await treasury.deposit('9000000000000000000000000', dai.address, '8400000000000000');
 
     // Stake OHM through helper
     await stakingHelper.stake('100000000000');
 
-    // Bond 1,000 OHM and Frax in each of their bonds
+    // Bond 1,000 OHM in each of their bonds
     //let amount = 1000 * 10**18;
     await daiBond.deposit('1000000000000000000000', '60000', deployer.address );
 

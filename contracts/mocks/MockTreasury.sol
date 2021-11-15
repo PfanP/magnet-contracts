@@ -184,7 +184,6 @@ contract MockOlympusTreasury is Ownable {
     constructor(
         address _OHM,
         address _DAI,
-        address _Frax,
         //address _OHMDAI,
         uint256 _blocksNeededForQueue
     ) {
@@ -193,9 +192,6 @@ contract MockOlympusTreasury is Ownable {
 
         isReserveToken[_DAI] = true;
         reserveTokens.push(_DAI);
-
-        isReserveToken[_Frax] = true;
-        reserveTokens.push(_Frax);
 
         // isLiquidityToken[ _OHMDAI ] = true;
         // liquidityTokens.push( _OHMDAI );
