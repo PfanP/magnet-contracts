@@ -10,7 +10,7 @@ async function main() {
     
     const OHM = await ethers.getContractFactory("OlympusERC20Token");
     //const ohm = await OHM.deploy();
-    const ohm = await OHM.attach('0xDe6D2D63b10c088263B55154638746bD1057312F');
+    const ohm = await OHM.attach('0x6775F2AeE6D4319dE54eaEC1b7b688B0Af8AeF4b');
 
     console.log("OlympusERC20Token ", ohm.address);
     
@@ -29,6 +29,25 @@ async function main() {
 
     let b = await ohm.balanceOf(accounts[0].address);
     console.log("balance " + b.toNumber()/10**d);
+
+
+    const Bond = await ethers.getContractFactory("MockOlympusBondDepository");
+    const daibond = await Bond.attach("0xdEF18E03653ec73125E0E8d43C6B9A9876dF982E");
+
+    console.log("daibond ", daibond.address);
+    let x = await daibond.totalDebt();
+    console.log("daibond ", x.toNumber()/10**9);
+
+    //let amount = 1000 * 10**18;
+    let amount = "1000000000000000000000";
+
+    await daibond.deposit(amount, '60000', deployer.address );
+
+    let z = await daibond.totalDebt();
+    console.log("daibond ", z.toNumber()/10**9);
+
+
+    
   }
   
   main()
