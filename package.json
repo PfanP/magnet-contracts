@@ -28,7 +28,7 @@
     "test": "npx hardhat test",
     "compile": "npx hardhat compile",
     "clean": "npx hardhat clean",
-    "start": "npx hardhat run scripts/deployAll.js",
+    "start": "npx hardhat run scripts/deploy.js",
     "lint:sol": "solhint -f table contracts/**/*.sol",
     "prettier": "prettier --write 'contracts/**/*.sol'"
   },
