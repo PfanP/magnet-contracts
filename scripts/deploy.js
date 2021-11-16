@@ -13,6 +13,9 @@ async function main() {
     console.log('Deploying contracts with the account: ' + deployer.address);
     console.log('MockDAO: ' + MockDAO.address);
 
+    // let amountMint = ethers.BigNumber.from(9000000000000000000000000);
+    // amountMint.toString()
+
     // -- params --
 
     // Initial staking index
@@ -64,13 +67,11 @@ async function main() {
     
     const OHM = await ethers.getContractFactory("OlympusERC20Token");
     const ohm = await OHM.deploy();
-    console.log("OlympusERC20Token deployed to", ohm.address);
 
     // Deploy DAI
     const DAI = await ethers.getContractFactory('DAI');
     const dai = await DAI.deploy( 0 );
 
-    console.log("dai deployed to", dai.address);
 
     // Deploy 10,000,000 mock DAI
     await dai.mint( deployer.address, initialMint );
@@ -81,102 +82,97 @@ async function main() {
     let _blocksNeededForQueue=0
     const treasury = await Treasury.deploy( ohm.address, dai.address, _blocksNeededForQueue );
 
-    console.log("treasury deployed to", treasury.address);
     
     const OlympusBondingCalculator = await ethers.getContractFactory('OlympusBondingCalculator');
     const olympusBondingCalculator = await OlympusBondingCalculator.deploy( ohm.address );
     console.log("olympusBondingCalculator deployed to", olympusBondingCalculator.address);
-
+    
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     const Distributor = await ethers.getContractFactory('Distributor');
     const distributor = await Distributor.deploy(treasury.address, ohm.address, epochLengthInBlocks, firstEpochBlock);
-    console.log("distributor deployed to", distributor.address);
 
+    
     // Deploy sOHM
     const SOHM = await ethers.getContractFactory('sOlympus');
     const sOHM = await SOHM.deploy();
-    console.log("sOHM deployed to", sOHM.address);
-
+    
     // Deploy Staking
     const Staking = await ethers.getContractFactory('OlympusStaking');
     const staking = await Staking.deploy( ohm.address, sOHM.address, epochLengthInBlocks, firstEpochNumber, firstEpochBlock );
-    console.log("staking deployed to", staking.address);
-
+    
     // Deploy staking warmpup
     const StakingWarmpup = await ethers.getContractFactory('StakingWarmup');
     const stakingWarmup = await StakingWarmpup.deploy(staking.address, sOHM.address);
-    console.log("stakingWarmup deployed to", stakingWarmup.address);
-
+    
+    
     // Deploy staking helper
     const StakingHelper = await ethers.getContractFactory('StakingHelper');
     const stakingHelper = await StakingHelper.deploy(staking.address, ohm.address);
-    console.log("stakingHelper deployed to", stakingHelper.address);
-
+    
     // Deploy DAI bond
     //@dev changed function call to Treasury of 'valueOf' to 'valueOfToken' in BondDepository due to change in Treausry contract
     const DAIBond = await ethers.getContractFactory('MockOlympusBondDepository');
     console.log("MockDAO.address " + MockDAO.address);
     const daiBond = await DAIBond.deploy(ohm.address, dai.address, treasury.address, MockDAO.address, zeroAddress);
-    console.log("daiBond deployed to", daiBond.address);
-
+    
     // queue and toggle DAI bond reserve depositor
     await treasury.queue('0', daiBond.address);
     await treasury.toggle('0', daiBond.address, zeroAddress);
-
+    
     console.log("toggle");
-
-     // Set DAI bond terms
-     await daiBond.initializeBondTerms(daiBondBCV, bondVestingLength, minBondPrice, maxBondPayout, bondFee, maxBondDebt, intialBondDebt);
-     console.log("Set DAI bond terms");
- 
-     // Set staking for DAI bond
-     console.log("Set staking for DAI");
-     await daiBond.setStaking(staking.address, stakingHelper.address);
- 
-     // Initialize sOHM and set the index
-     console.log("Initialize sOHM and set the index");
-     await sOHM.initialize(staking.address);
-     await sOHM.setIndex(initialIndex);
- 
-     // set distributor contract and warmup contract
-     console.log("set distributor contract and warmup contract");
-     await staking.setContract('0', distributor.address);
-     await staking.setContract('1', stakingWarmup.address);
-
-     // Set treasury for OHM token
+    
+    // Set DAI bond terms
+    await daiBond.initializeBondTerms(daiBondBCV, bondVestingLength, minBondPrice, maxBondPayout, bondFee, maxBondDebt, intialBondDebt);
+    console.log("Set DAI bond terms");
+    
+    // Set staking for DAI bond
+    console.log("Set staking for DAI");
+    await daiBond.setStaking(staking.address, stakingHelper.address);
+    
+    // Initialize sOHM and set the index
+    console.log("Initialize sOHM and set the index");
+    await sOHM.initialize(staking.address);
+    await sOHM.setIndex(initialIndex);
+    
+    // set distributor contract and warmup contract
+    console.log("set distributor contract and warmup contract");
+    await staking.setContract('0', distributor.address);
+    await staking.setContract('1', stakingWarmup.address);
+    
+    // Set treasury for OHM token
     console.log("setvault");
     await ohm.setVault(treasury.address);
-
+    
     // Add staking contract as distributor recipient
     console.log("Add staking contract as distributor recipient");
     await distributor.addRecipient(staking.address, initialRewardRate);
-
+    
     // queue and toggle reward manager
     console.log("queue and toggle reward manager");
     await treasury.queue('8', distributor.address);
     await treasury.toggle('8', distributor.address, zeroAddress);
-
+    
     // queue and toggle deployer reserve depositor
     console.log("queue and toggle deployer reserve depositor");
     await new Promise(resolve => setTimeout(resolve, 1000));
     //TODO FAIL
     await treasury.queue('0', deployer.address);
     await treasury.toggle('0', deployer.address, zeroAddress);
-
+    
     // queue and toggle liquidity depositor
     console.log("queue and toggle liquidity depositor");
     await treasury.queue('4', deployer.address, );
     await treasury.toggle('4', deployer.address, zeroAddress);
-
+    
     // Approve the treasury to spend DAI
     console.log("Approve the treasury to spend DAI");
     await dai.approve(treasury.address, largeApproval );
-
+    
     // Approve dai bonds to spend deployer's DAI
     console.log("Approve dai bonds to spend deployer's DAI");
     await dai.approve(daiBond.address, largeApproval );
-
+    
     // Approve staking and staking helper contact to spend deployer's OHM
     console.log("Approve staking and staking helper contact to spend deployer's OHM");
     await ohm.approve(staking.address, largeApproval);
@@ -184,19 +180,29 @@ async function main() {
     
     // Deposit 9,000,000 DAI to treasury, 600,000 OHM gets minted to deployer and 8,400,000 are in treasury as excesss reserves
     await treasury.deposit('9000000000000000000000000', dai.address, '8400000000000000');
-
+    
     // Stake OHM through helper
     await stakingHelper.stake('100000000000');
-
+    
     // Bond 1,000 OHM in each of their bonds
     //let amount = 1000 * 10**18;
     await daiBond.deposit('1000000000000000000000', '60000', deployer.address );
-
+    
     //console.log(await daiBond.totalDebt().toNumber());
-
-     console.log("=== done ===")
-
-
+    
+    console.log("OlympusERC20Token deployed to", ohm.address);
+    console.log("dai deployed to", dai.address);
+    console.log("treasury deployed to", treasury.address);
+    console.log("distributor deployed to", distributor.address);
+    console.log("sOHM deployed to", sOHM.address);
+    console.log("daiBond deployed to", daiBond.address);
+    console.log("staking deployed to", staking.address);
+    console.log("stakingWarmup deployed to", stakingWarmup.address);
+    console.log("stakingHelper deployed to", stakingHelper.address);
+    
+    console.log("=== done ===")
+    
+    
     // OlympusStaking
     // StakingHelper
     // Aave Allocator
