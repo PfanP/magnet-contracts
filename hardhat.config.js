@@ -10,8 +10,6 @@ require("@nomiclabs/hardhat-ethers");
 //import SignerWithAddress from "@nomiclabs/hardhat-ethers/signers"
 
 
-const PRIVATE_KEY = "4dbcf5c938d2126fabcdc06e8cf6b9326e3ee0bb81bce6a00aca0c60232cb30e";
-
 module.exports = {
   defaultNetwork: "localhost",
   solidity: {
@@ -26,7 +24,6 @@ module.exports = {
   networks: {
     eth: {
       url: "https://eth-mainnet.alchemyapi.io/v2/TVFR1pHyDuBcHE1qhGQYI9J1Sf-BfcKi",
-      //accounts: [accounts: [`0x${ROPSTEN_PRIVATE_KEY}`]]
       accounts: [`0x${PRIVATE_KEY}`]
     },
     fuji: {
