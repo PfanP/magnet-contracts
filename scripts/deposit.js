@@ -9,16 +9,43 @@ async function main() {
     // -- contracts --
     
     const OHM = await ethers.getContractFactory("OlympusERC20Token");
-    const ohm = await OHM.deploy();
-    //const ohm = await OHM.attach('0xDe6D2D63b10c088263B55154638746bD1057312F');
+    const BondCalc = await ethers.getContractFactory("OlympusBondingCalculator");
+    const Treasury = await ethers.getContractFactory('OlympusTreasury'); 
+
+    const ohm = await OHM.attach('0xDe6D2D63b10c088263B55154638746bD1057312F');
+    const bondcalc = await BondCalc.attach("0x10D9485C3021E1Db054df81A4e1D5c8217A69213");
+    //const treasury = await Treasury.attach("0x53a5C104D10f3479547E31A5D6BA28928254D822");
+    const Bond = await ethers.getContractFactory('OlympusBondDepository');
+    const bond = await Bond.attach("0xcC11AA3fe4168A5de787e48C26170dD4804E198C");
+
+
+    //const daiBondBCV = '369';
+    const daiBondBCV = '369';
+    const bondVestingLength = '33110';
+    const minBondPrice = '50000';
+    const maxBondPayout = '50'
+    const bondFee = '10000';
+    const maxBondDebt = '1000000000000000';
+    const intialBondDebt = '0';
 
     console.log("OlympusERC20Token ", ohm.address);    
     console.log("accounts " + accounts[0].address);
     
-    const BondCalc = await ethers.getContractFactory("OlympusBondingCalculator");
-    const bondcalc = await BondCalc.deploy(ohm.address);
-    
     console.log("bondcalc " + bondcalc.address);
+
+    // controlVariable; // scaling variable for price
+    // vestingTerm; // in blocks
+    // minimumPrice; // vs principle value
+    // maxPayout; // in thousandths of a %. i.e. 500 = 0.5%
+    // fee; // as % of bond payout, in hundreths. ( 500 = 5% = 0.05 for every 1 paid)
+    // maxDebt; // 9 decimal debt ratio, max % total supply created as debt
+
+    let bcv = await bond.terms();
+    console.log("bcv " + bcv);
+
+    //369,33110,50000,50,10000,1000000000000000
+
+    //await bond.initializeBondTerms('0', bondVestingLength, minBondPrice, maxBondPayout, bondFee, maxBondDebt, intialBondDebt);
 
     //const DAI = await ethers.getContractFactory('DAI');
     //const dai = await DAI.deploy( 0 );
@@ -31,34 +58,18 @@ async function main() {
     let ohmdai = ohm;
     
     let _blocksNeededForQueue=0
-    const Treasury = await ethers.getContractFactory('OlympusTreasury'); 
-    const treasury = await Treasury.deploy( ohm.address, dai.address, ohmdai.address, _blocksNeededForQueue );
-    const someBond = await ethers.getContractFactory('OlympusBondDepository');
-    //
-    const bond = await someBond.deploy(ohm.address, dai.address, treasury.address, MockDAO.address, zeroAddress);
-    console.log("bond " + bond.address);
-
-    const daiBondBCV = '369';
-    const bondVestingLength = '33110';
-    const minBondPrice = '50000';
-    const maxBondPayout = '50'
-    const bondFee = '10000';
-    const maxBondDebt = '1000000000000000';
-    const intialBondDebt = '1000';
-
-    await bond.initializeBondTerms(daiBondBCV, bondVestingLength, minBondPrice, maxBondPayout, bondFee, maxBondDebt, intialBondDebt);
-
+    
     let bterms = await bond.terms();
 
     //console.log(bterms.length);
-    console.log(bterms.fee.toNumber());
-    console.log(bterms.controlVariable.toNumber());
-    let debt = await bond.currentDebt();
-    console.log("currentDebt " + debt.toNumber());
-    //console.log(await bond.totalDebt());
+    // console.log(bterms.fee.toNumber());
+    // console.log(bterms.controlVariable.toNumber());
+    // let debt = await bond.currentDebt();
+    // console.log("currentDebt " + debt.toNumber());
+    // //console.log(await bond.totalDebt());
     
-    let supply = await ohm.totalSupply();
-    console.log("supply " + supply);
+    // let supply = await ohm.totalSupply();
+    // console.log("supply " + supply);
 
 
     // let depositor = accounts[0].address;
