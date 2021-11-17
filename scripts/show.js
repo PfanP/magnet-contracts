@@ -1,5 +1,14 @@
 async function main() {
 
+    // First block epoch occurs
+    const firstEpochBlock = '8961000';
+
+    // What epoch will be first epoch
+    const firstEpochNumber = '338';
+
+    // How many blocks are in each epoch
+    const epochLengthInBlocks = '2200';
+
     //DAO: multisig
     //const [deployer, MockDAO] = await ethers.getSigners();
     const [deployer] = await ethers.getSigners();
@@ -9,11 +18,16 @@ async function main() {
     // -- contracts --
     
     const OHM = await ethers.getContractFactory("OlympusERC20Token");
+    const Staking = await ethers.getContractFactory('OlympusStaking');
+    const SOHM = await ethers.getContractFactory('sOlympus');
+
     //const ohm = await OHM.deploy();
     const ohm = await OHM.attach('0xD907eC8EeDDCaCE5F2E299fa06C3EDD1497F6525');
+    const sOHM = await SOHM.deploy();
+    const staking = await Staking.deploy( ohm.address, sOHM.address, epochLengthInBlocks, firstEpochNumber, firstEpochBlock );
 
     console.log("OlympusERC20Token ", ohm.address);
-    
+    console.log("Staking Address", staking.address);
     //ohm.transfer(accounts[1], 100);
     
 
@@ -46,6 +60,9 @@ async function main() {
 
     // let z = await daibond.totalDebt();
     // console.log("daibond ", z.toNumber()/10**9);
+
+    /// staking test
+
 
 
     
