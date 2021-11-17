@@ -47,6 +47,19 @@ describe('Olympus Staking', () => {
       CalculateEpoch,
       calculateEpoch
 
+    // What epoch will be first epoch
+    const firstEpochNumber = '338';
+
+    // How many blocks are in each epoch
+    const epochLengthInBlocks = '2200';
+
+    // First block epoch occurs
+    const firstEpochBlock = '8961000';
+
+    // Initial mint for DAI (10,000,000)
+    const initialMint = '10000000000000000000000000';
+
+
     beforeEach(async () => {
 
         [deployer, addr1, addr2, addr3] = await ethers.getSigners();
@@ -54,11 +67,22 @@ describe('Olympus Staking', () => {
         OLY = await ethers.getContractFactory('OlympusERC20Token');
         oly = await OLY.deploy();
 
-        Staking = await ethers.getContractFactory('OlympusStaking');
-        staking = await Staking.deploy();
+        // Deploy sOHM
+        const SOHM = await ethers.getContractFactory('sOlympus');
+        const sOHM = await SOHM.deploy();
 
-        Treasury = await ethers.getContractFactory('MockTreasury');
-        treasury = await Treasury.deploy();
+        // Deploy DAI
+        const DAI = await ethers.getContractFactory('DAI');
+        const dai = await DAI.deploy( 0 );
+
+        // Deploy 10,000,000 mock DAI
+        await dai.mint( deployer.address, initialMint );
+
+        Staking = await ethers.getContractFactory('OlympusStaking');
+        staking = await Staking.deploy(oly.address, sOHM.address, epochLengthInBlocks, firstEpochNumber, firstEpochBlock);
+
+        Treasury = await ethers.getContractFactory('MockOlympusTreasury');
+        treasury = await Treasury.deploy(oly.address, dai.address, 0);
 
         CalculateEpoch = await ethers.getContractFactory('CalculateEpoch');
         calculateEpoch = await CalculateEpoch.deploy();

@@ -42,7 +42,7 @@ describe('sOlympus', () => {
 
         [deployer, addr1, addr2, addr3] = await ethers.getSigners();
 
-        OLY = await ethers.getContractFactory('OlympusERC20TOken');
+        OLY = await ethers.getContractFactory('OlympusERC20Token');
         oly = await OLY.deploy();
 
         Staking = await ethers.getContractFactory('OlympusStaking');
