@@ -65,12 +65,14 @@ async function main() {
 
     // -- contracts --
     
-    const OHM = await ethers.getContractFactory("OlympusERC20Token");
+    const OHM = await ethers.getContractFactory("TimeERC20Token");
     const ohm = await OHM.deploy();
 
     // Deploy DAI
     const DAI = await ethers.getContractFactory('DAI');
     const dai = await DAI.deploy( 0 );
+
+    console.log("mint");
 
 
     // Deploy 10,000,000 mock DAI
