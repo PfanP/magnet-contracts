@@ -22,9 +22,14 @@ module.exports = {
     }
   },
   networks: {
-    eth: {
-      url: "https://eth-mainnet.alchemyapi.io/v2/TVFR1pHyDuBcHE1qhGQYI9J1Sf-BfcKi",
-      accounts: [`0x${PRIVATE_KEY}`]
+    // eth: {
+    //   url: "https://eth-mainnet.alchemyapi.io/v2/TVFR1pHyDuBcHE1qhGQYI9J1Sf-BfcKi",
+    //   accounts: [`0x${process.env.PRIVATE_KEY}`]
+    // },
+    avax: {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts: [`0x${process.env.AVAX_TEST_PRIVATE_KEY}`]
+      //43114
     },
     fuji: {
       url: "https://api.avax-test.network/ext/bc/C/rpc",
