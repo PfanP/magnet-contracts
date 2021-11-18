@@ -78,7 +78,7 @@ async function main() {
     // Deploy 10,000,000 mock DAI
     await dai.mint( deployer.address, initialMint );
 
-    const Treasury = await ethers.getContractFactory('MockOlympusTreasury'); 
+    const Treasury = await ethers.getContractFactory('TimeMockTreasury');
 
     //TODO check
     let _blocksNeededForQueue=0

@@ -78,8 +78,13 @@ async function main() {
     await dai.approve(treasury.address, largeApproval );
     await ohm.approve(staking.address, largeApproval);
 
-    await treasury.toggle('0', daiBond.address, zeroAddress);
-    await treasury.incurDebt(100, dai.address);
+    // await treasury.toggle('0', daiBond.address, zeroAddress);
+
+    // Deposit 9,000,000 DAI to treasury, 600,000 OHM gets minted to deployer and 8,400,000 are in treasury as excesss reserves
+    await treasury.deposit('9000000000000000000000000', dai.address, '8400000000000000');
+
+    // // Stake OHM through helper
+    // await stakingHelper.stake('100000000000');
 
     // let x1 = await treasury.liquidityTokens(0);
     // console.log("liquidityTokens: " + x1);
