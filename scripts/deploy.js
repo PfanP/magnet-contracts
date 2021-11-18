@@ -123,7 +123,7 @@ async function main() {
     await treasury.toggle('0', daiBond.address, zeroAddress);
     
     console.log("toggle");
-    
+
     // Set DAI bond terms
     await daiBond.initializeBondTerms(daiBondBCV, bondVestingLength, minBondPrice, maxBondPayout, bondFee, maxBondDebt, intialBondDebt);
     console.log("Set DAI bond terms");
@@ -184,11 +184,11 @@ async function main() {
     await treasury.deposit('9000000000000000000000000', dai.address, '8400000000000000');
     
     // Stake OHM through helper
-    await stakingHelper.stake('100000000000');
+    await stakingHelper.stake('100000000000', deployer.address);
     
     // Bond 1,000 OHM in each of their bonds
     //let amount = 1000 * 10**18;
-    await daiBond.deposit('1000000000000000000000', '60000', deployer.address );
+    // await daiBond.deposit('1000000000000000000000', '60000', deployer.address );
     
     //console.log(await daiBond.totalDebt().toNumber());
     
