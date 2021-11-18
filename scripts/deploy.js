@@ -85,7 +85,7 @@ async function main() {
     const treasury = await Treasury.deploy( ohm.address, dai.address, _blocksNeededForQueue );
 
     
-    const OlympusBondingCalculator = await ethers.getContractFactory('OlympusBondingCalculator');
+    const OlympusBondingCalculator = await ethers.getContractFactory('TimeBondingCalculator');
     const olympusBondingCalculator = await OlympusBondingCalculator.deploy( ohm.address );
     console.log("olympusBondingCalculator deployed to", olympusBondingCalculator.address);
     
@@ -96,11 +96,11 @@ async function main() {
 
     
     // Deploy sOHM
-    const SOHM = await ethers.getContractFactory('sOlympus');
+    const SOHM = await ethers.getContractFactory('MEMOries');
     const sOHM = await SOHM.deploy();
     
     // Deploy Staking
-    const Staking = await ethers.getContractFactory('OlympusStaking');
+    const Staking = await ethers.getContractFactory('TimeStaking');
     const staking = await Staking.deploy( ohm.address, sOHM.address, epochLengthInBlocks, firstEpochNumber, firstEpochBlock );
     
     // Deploy staking warmpup
@@ -114,7 +114,7 @@ async function main() {
     
     // Deploy DAI bond
     //@dev changed function call to Treasury of 'valueOf' to 'valueOfToken' in BondDepository due to change in Treausry contract
-    const DAIBond = await ethers.getContractFactory('MockOlympusBondDepository');
+    const DAIBond = await ethers.getContractFactory('TimeBondDepository');
     console.log("MockDAO.address " + MockDAO.address);
     const daiBond = await DAIBond.deploy(ohm.address, dai.address, treasury.address, MockDAO.address, zeroAddress);
     
