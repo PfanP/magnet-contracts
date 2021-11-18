@@ -29,7 +29,7 @@ describe('BondingFacilitator', () => {
 
         [deployer, addr1] = await ethers.getSigners();
 
-        OLY = await ethers.getContractFactory('OlympusERC20TOken');
+        OLY = await ethers.getContractFactory('OlympusERC20Token');
         oly = await OLY.deploy();
 
         MockBonding = await ethers.getContractFactory('MockBonding');

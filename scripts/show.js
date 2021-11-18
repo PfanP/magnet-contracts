@@ -1,5 +1,14 @@
 async function main() {
 
+    // First block epoch occurs
+    const firstEpochBlock = '8961000';
+
+    // What epoch will be first epoch
+    const firstEpochNumber = '338';
+
+    // How many blocks are in each epoch
+    const epochLengthInBlocks = '2200';
+
     //DAO: multisig
     //const [deployer, MockDAO] = await ethers.getSigners();
     const [deployer] = await ethers.getSigners();
@@ -52,6 +61,7 @@ async function main() {
     const stakingHelper = await StakingHelper.deploy(staking.address, ohm.address);
 
     //const ohm = await OHM.deploy();
+
     //ohm.transfer(accounts[1], 100);
 
     let n = await ohm.name();
