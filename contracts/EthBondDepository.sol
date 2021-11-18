@@ -922,7 +922,7 @@ interface IWETH9 is IERC20 {
     function deposit() external payable;
 }
 
-contract TimeBondDepository is Ownable {
+contract EthTimeBondDepository is Ownable {
     using FixedPoint for *;
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
